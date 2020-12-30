@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v4.1.1">
+  <title>Dailycious | Just cook don't ask</title>
+  <!-- Share Button -->
+  <script type="text/javascript"
+    src="https://platform-api.sharethis.com/js/sharethis.js#property=5fcdaef9273a4a0013a723db&product=inline-share-buttons"
+    async="async"></script>
+  <!-- Firebase -->
+  <script defer src="/__/firebase/8.1.1/firebase-app.js"></script>
+  <script defer src="/__/firebase/8.1.1/firebase-auth.js"></script>
+  <script defer src="/__/firebase/8.1.1/firebase-firestore.js"></script>
+  <script defer src="/__/firebase/8.1.1/firebase-analytics.js"></script>
+  <script defer src="/__/firebase/8.1.1/firebase-performance.js"></script>
+  <script defer src="/__/firebase/init.js?useEmulator=false"></script>
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/cb61666d8f.js" crossorigin="anonymous"></script>
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+  <!-- CSS -->
+  <link rel="stylesheet" href="./css/global.css">
+  <link href="css/home.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-yellow bg-transparant">
+    <div class="container">
+      <a class="navbar-brand font-weight-bold" href="/">
+        <h1>dailycious</h1>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+
+        </ul>
+        <ul class="navbar-nav text-ce">
+          <li class="nav-item">
+            <a class="nav-link" href="./search.html">
+              <span class="fas fa-search"></span><span class="d-inline d-md-none ml-2">Cari</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="fas fa-cog"></span> <span class="d-inline d-md-none ml-2">Pengaturan</span>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" id="dropdownWrapper">
+
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="container py-5 mt-5">
+    <div class="row">
+      <div class="col-md-6 text-white text-center">
+        <h2 class="font-weight-bold">Tulis resep</h2>
+        <p>Tulis resep kreasimu dan publikasikan <br>
+          <a class="text-white" href="./Login.html">Buat resep sekarang ></a>
+        </p>
+      </div>
+      <div class="col-md-6 text-white text-center">
+        <h2 class="font-weight-bold">Cari resep</h2>
+        <form action="search.html" id="searchForm">
+          <div class="input-group mb-2">
+            <div class="input-group-prepend">
+              <div class="input-group-text"><span class="fas fa-search"></span></div>
+            </div>
+            <input type="text" class="form-control" placeholder="Cari resep" name="resep">
+          </div>
+        </form>
+        <a href="./search.html" class="btn search">Cari berdasarkan bahan baku ?</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="listResep">
+    <h2 class="text-center font-weight-bold text-white mb-5">Resep Terbaru</h2>
+    <div class="d-flex justify-content-around flex-md-row flex-column align-items-center">
+      <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+    crossorigin="anonymous"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const db = firebase.firestore()
+      $(document).scroll(function () {
+        $('.navbar').toggleClass('nav-transparant', $(this).scrollTop() > $('.navbar').height());
+      });
+
+      db.collection('resep').orderBy("timestamp", "desc").limit(4).get().then(res => {
+        if (!res.empty) {
+          let listResep = `
+          <h2 class="text-center font-weight-bold text-white mb-5">Resep Terbaru</h2>
+          <div class="d-flex justify-content-around flex-md-row flex-column align-items-center">
+          `
+          res.docs.forEach(doc => {
+            const data = doc.data()
+            let thumbnail
+            if (data.thumbnail !== '') {
+              thumbnail = `<img src="${data.thumbnail}" alt="${data.judul}">`
+            } else {
+              thumbnail = '<img src="./img/Group 25.png" alt="Thumb">'
+            }
+            listResep += `
+            <div class="resepItem mr-md-3">
+            <div class="thumbnail">
+              <a href="./Resep.html?resep=${data.judul.replace(' ', '-')}">${thumbnail}</a>
+            </div>
+            <a href="./Resep.html?resep=${data.judul.replace(' ', '-')}">
+              <h4 class="judul">${data.judul}</h4>
+            </a>
+            <p class="keterangan">${data.pembuatResep.nama}</p>
+          </div>
+            `
+          })
+          listResep += '</div>'
+          document.getElementById('listResep').innerHTML = listResep
+        } else {
+          document.getElementById('listResep').innerHTML = `
+          <h2 class="text-center font-weight-bold text-white mb-5">Resep Terbaru</h2>
+          <div class="d-flex justify-content-around flex-column align-items-center text-center">
+            <h4 class="text-white">Mohon Maaf resep belum tersedia</h4>
+            <a href="./Login.html" class="btn btn-yellow">Ayo Buat Resepmu sendiri</a>
+          </div>
+          `
+        }
+      })
+
+      firebase.auth().onAuthStateChanged(function (user) {
+        const dropdownWrapper = document.getElementById('dropdownWrapper')
+        if (user) {
+          dropdownWrapper.innerHTML = `
+            <a class="dropdown-item" href = "./dashboard.html" >Dashboard</a >
+            <a class="dropdown-item" href="./update.html">Update Profile</a>
+            <button class="btn dropdown-item" id="logout">
+                Signout
+            </button>
+          `
+          document.getElementById('logout').addEventListener('click', (e) => {
+            e.preventDefault();
+            return firebase.auth().signOut().then(function () {
+              window.location.href = './Login.html'
+            }).catch(function (error) {
+              console.log(error);
+            });
+
+          })
+        } else {
+          dropdownWrapper.innerHTML = `
+            <a class="dropdown-item" href = "./Login.html" > Login</a >
+            <a class="dropdown-item" href="./Register.html">Regis</a>
+          `
+        }
+      });
+    });
+  </script>
+
+</html>

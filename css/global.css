@@ -1,0 +1,70 @@
+:root {
+  --orange: #f57b51;
+  --yellow: #fbbc58;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: "Montserrat", sans-serif;
+}
+.btn-orange {
+  color: #fff;
+  background-color: var(--orange);
+  border-color: var(--orange);
+}
+.btn-yellow {
+  color: black;
+  background-color: var(--yellow);
+  border-color: var(--yellow);
+}
+.btn-black {
+  color: #fff;
+  background-color: black;
+  border-color: black;
+}
+.navbar-orange .navbar-brand,
+.navbar-orange .navbar-nav .nav-link {
+  color: var(--orange);
+}
+
+.text-orange {
+  color: var(--orange);
+}
+
+.bg-orange {
+  background: var(--orange) !important;
+}
+.vh-md-100 {
+  height: unset;
+}
+.vh-25 {
+  height: 25vh;
+}
+.vh-50 {
+  height: 50vh !important;
+}
+h1 {
+  font-weight: bold;
+}
+
+label {
+  font-weight: bold;
+}
+.bg-yellow {
+  background: var(--yellow);
+}
+@media (min-width: 576px) {
+}
+
+@media (min-width: 768px) {
+}
+
+@media (min-width: 992px) {
+  .bg-transparant {
+    background: transparent !important;
+  }
+}
+
+@media (min-width: 1200px) {
+}
